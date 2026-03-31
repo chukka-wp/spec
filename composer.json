@@ -1,0 +1,55 @@
+{
+    "name": "chukka-wp/chukka-spec",
+    "description": "Open standard and PHP package for water polo match data",
+    "keywords": [
+        "water-polo",
+        "chukka",
+        "scoring",
+        "match-data"
+    ],
+    "homepage": "https://github.com/chukka-wp/chukka-spec",
+    "license": "MIT",
+    "require": {
+        "php": "^8.3",
+        "illuminate/database": "^11.0|^12.0|^13.0",
+        "illuminate/support": "^11.0|^12.0|^13.0",
+        "illuminate/validation": "^11.0|^12.0|^13.0",
+        "spatie/laravel-package-tools": "^1.12"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^9.0|^10.0|^11.0",
+        "pestphp/pest": "^3.0",
+        "pestphp/pest-plugin-laravel": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "ChukkaWp\\ChukkaSpec\\": "src",
+            "ChukkaWp\\ChukkaSpec\\Database\\Seeders\\": "database/seeders"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ChukkaWp\\ChukkaSpec\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/pest",
+        "test-coverage": "vendor/bin/pest --coverage",
+        "format": "vendor/bin/pint"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "ChukkaWp\\ChukkaSpec\\ChukkaSpecServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
