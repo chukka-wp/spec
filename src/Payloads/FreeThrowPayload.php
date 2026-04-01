@@ -2,11 +2,11 @@
 
 namespace ChukkaWp\ChukkaSpec\Payloads;
 
-final class CornerThrowPayload extends Payload
+final class FreeThrowPayload extends Payload
 {
     public function __construct(
         public readonly string $teamId,
-        public readonly string $side,
+        public readonly ?string $reason,
         public readonly ?string $takenByPlayerId,
         public readonly ?int $takenByCapNumber,
     ) {}
@@ -15,7 +15,7 @@ final class CornerThrowPayload extends Payload
     {
         return [
             'team_id' => $this->teamId,
-            'side' => $this->side,
+            'reason' => $this->reason,
             'taken_by_player_id' => $this->takenByPlayerId,
             'taken_by_cap_number' => $this->takenByCapNumber,
         ];
@@ -25,7 +25,7 @@ final class CornerThrowPayload extends Payload
     {
         return [
             'team_id' => ['required', 'string'],
-            'side' => ['required', 'string', 'in:left,right'],
+            'reason' => ['nullable', 'string', 'in:foul,out_of_bounds,clock_expiry'],
             'taken_by_player_id' => ['nullable', 'string'],
             'taken_by_cap_number' => ['nullable', 'integer'],
         ];
@@ -35,7 +35,7 @@ final class CornerThrowPayload extends Payload
     {
         return new self(
             teamId: $data['team_id'],
-            side: $data['side'],
+            reason: $data['reason'] ?? null,
             takenByPlayerId: $data['taken_by_player_id'] ?? null,
             takenByCapNumber: $data['taken_by_cap_number'] ?? null,
         );

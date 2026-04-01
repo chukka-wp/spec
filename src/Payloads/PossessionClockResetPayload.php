@@ -27,7 +27,7 @@ final class PossessionClockResetPayload extends Payload
             'team_id' => ['required', 'string'],
             'new_value_seconds' => ['required', 'integer'],
             'mode' => ['required', 'string', 'in:standard,reduced'],
-            'reason' => ['required', 'string', 'in:new_possession,shot_rebound_attacking,exclusion_foul,corner_throw,penalty_throw_no_change,neutral_throw,goal_throw,timeout_end'],
+            'reason' => ['required', 'string', 'in:new_possession,shot_rebound_attacking,exclusion_foul,two_meter_throw,penalty_throw_no_change,neutral_throw,goal_throw,timeout_end'],
         ];
     }
 

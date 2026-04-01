@@ -38,7 +38,7 @@ class PossessionClockCalculator
             ],
 
             PossessionClockResetReason::ShotReboundAttacking,
-            PossessionClockResetReason::CornerThrow,
+            PossessionClockResetReason::TwoMeterThrow,
             PossessionClockResetReason::PenaltyThrowNoChange => [
                 'seconds' => $reduced,
                 'mode' => PossessionClockMode::Reduced,

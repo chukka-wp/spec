@@ -2,7 +2,7 @@
 
 namespace ChukkaWp\ChukkaSpec\Enums;
 
-enum CornerThrowSide: string
+enum TwoMeterThrowSide: string
 {
     case Left = 'left';
     case Right = 'right';

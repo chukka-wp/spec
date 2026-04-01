@@ -14,8 +14,10 @@ enum EventType: string
     case MatchAbandoned = 'match_abandoned';
     case Goal = 'goal';
     case GoalThrow = 'goal_throw';
-    case CornerThrow = 'corner_throw';
+    case TwoMeterThrow = 'two_meter_throw';
+    case FreeThrow = 'free_throw';
     case NeutralThrow = 'neutral_throw';
+    case Shot = 'shot';
     case OrdinaryFoul = 'ordinary_foul';
     case ExclusionFoul = 'exclusion_foul';
     case ExclusionExpiry = 'exclusion_expiry';
@@ -59,8 +61,10 @@ enum EventType: string
             self::MatchAbandoned => 'Match Abandoned',
             self::Goal => 'Goal',
             self::GoalThrow => 'Goal Throw',
-            self::CornerThrow => 'Corner Throw',
+            self::TwoMeterThrow => 'Two-Meter Throw',
+            self::FreeThrow => 'Free Throw',
             self::NeutralThrow => 'Neutral Throw',
+            self::Shot => 'Shot',
             self::OrdinaryFoul => 'Ordinary Foul',
             self::ExclusionFoul => 'Exclusion Foul',
             self::ExclusionExpiry => 'Exclusion Expiry',
