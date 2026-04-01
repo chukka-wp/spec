@@ -9,6 +9,7 @@ return [
         'rule_set' => \ChukkaWp\ChukkaSpec\Models\RuleSet::class,
         'match' => \ChukkaWp\ChukkaSpec\Models\MatchModel::class,
         'roster_entry' => \ChukkaWp\ChukkaSpec\Models\RosterEntry::class,
+        'match_official' => \ChukkaWp\ChukkaSpec\Models\MatchOfficial::class,
         'event' => \ChukkaWp\ChukkaSpec\Models\Event::class,
     ],
 ];

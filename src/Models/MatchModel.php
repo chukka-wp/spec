@@ -44,6 +44,11 @@ class MatchModel extends Model
         return $this->hasMany(config('chukka-spec.models.roster_entry'), 'match_id');
     }
 
+    public function officials(): HasMany
+    {
+        return $this->hasMany(config('chukka-spec.models.match_official'), 'match_id');
+    }
+
     public function events(): HasMany
     {
         return $this->hasMany(config('chukka-spec.models.event'), 'match_id')->orderBy('sequence');
