@@ -47,8 +47,8 @@ class GameStateService
             events: $match->events,
             ruleSet: $match->ruleSet,
             matchId: $match->id,
-            homeTeamId: $match->home_team_id,
-            awayTeamId: $match->away_team_id,
+            homeTeamId: $match->home_team_id ?? '',
+            awayTeamId: $match->away_team_id ?? '',
         );
     }
 }
