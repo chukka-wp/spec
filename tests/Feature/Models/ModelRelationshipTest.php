@@ -132,6 +132,43 @@ it('player casts is_goalkeeper to boolean', function () {
     expect($player->is_goalkeeper)->toBeTrue();
 });
 
+it('player casts date_of_birth to date', function () {
+    $club = Club::create(['name' => 'Dolphins']);
+    $player = Player::create([
+        'club_id' => $club->id,
+        'name' => 'Young Player',
+        'date_of_birth' => '2012-03-15',
+    ]);
+
+    $player->refresh();
+
+    expect($player->date_of_birth)->toBeInstanceOf(Carbon\Carbon::class)
+        ->and($player->date_of_birth->format('Y-m-d'))->toBe('2012-03-15');
+});
+
+it('player casts gender to Gender enum', function () {
+    $club = Club::create(['name' => 'Rays']);
+    $player = Player::create([
+        'club_id' => $club->id,
+        'name' => 'Alex Morgan',
+        'gender' => 'female',
+    ]);
+
+    $player->refresh();
+
+    expect($player->gender)->toBe(Gender::Female);
+});
+
+it('player date_of_birth and gender can be null', function () {
+    $club = Club::create(['name' => 'Waves']);
+    $player = Player::create(['club_id' => $club->id, 'name' => 'No Details']);
+
+    $player->refresh();
+
+    expect($player->date_of_birth)->toBeNull()
+        ->and($player->gender)->toBeNull();
+});
+
 // ── TeamMembership ──────────────────────────────────────────────────
 
 it('team membership belongs to player and team', function () {
