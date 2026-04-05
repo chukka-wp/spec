@@ -23,14 +23,22 @@ class MatchSummaryBuilder
 {
     public function buildForMatch(MatchModel $match): MatchSummary
     {
-        $match->loadMissing([
-            'events',
-            'ruleSet',
-            'homeTeam.club',
-            'awayTeam.club',
-            'rosterEntries.player',
-            'officials',
-        ]);
+        $relations = ['events', 'rosterEntries', 'officials'];
+
+        if ($match->rule_set_id) {
+            $relations[] = 'ruleSet';
+        }
+
+        if ($match->home_team_id && method_exists($match, 'homeTeam')) {
+            $relations[] = 'homeTeam.club';
+            $relations[] = 'awayTeam.club';
+        }
+
+        if (! $match->rosterEntries?->first()?->player_name && method_exists($match, 'rosterEntries')) {
+            $relations[] = 'rosterEntries.player';
+        }
+
+        $match->loadMissing($relations);
 
         $preFilter = new CorrectionPreFilter;
         $result = $preFilter->filter($match->events);
@@ -80,15 +88,23 @@ class MatchSummaryBuilder
             };
         }
 
-        $homeTeamId = $match->home_team_id;
-        $awayTeamId = $match->away_team_id;
+        $hasSide = $match->rosterEntries->first()?->side !== null;
 
-        $rosterByTeam = $match->rosterEntries->groupBy('team_id');
+        if ($hasSide) {
+            $homeRoster = $match->rosterEntries->where('side', 'home');
+            $awayRoster = $match->rosterEntries->where('side', 'away');
+        } else {
+            $rosterByTeam = $match->rosterEntries->groupBy('team_id');
+            $homeRoster = $rosterByTeam->get($match->home_team_id, collect());
+            $awayRoster = $rosterByTeam->get($match->away_team_id, collect());
+        }
 
         $homeTeam = $this->buildTeam(
-            $match->homeTeam,
+            $match->homeTeam ?? null,
+            $match->home_team_name,
             $match->home_cap_colour,
-            $rosterByTeam->get($homeTeamId, collect()),
+            $match->home_team_id ?? $match->home_external_team_id,
+            $homeRoster,
             $playerGoals,
             $playerFouls,
             $playerExclusions,
@@ -96,9 +112,11 @@ class MatchSummaryBuilder
         );
 
         $awayTeam = $this->buildTeam(
-            $match->awayTeam,
+            $match->awayTeam ?? null,
+            $match->away_team_name,
             $match->away_cap_colour,
-            $rosterByTeam->get($awayTeamId, collect()),
+            $match->away_team_id ?? $match->away_external_team_id,
+            $awayRoster,
             $playerGoals,
             $playerFouls,
             $playerExclusions,
@@ -112,7 +130,7 @@ class MatchSummaryBuilder
             teamId: $official->team_id,
         ))->all();
 
-        $ruleSet = $match->ruleSet;
+        $ruleSet = $match->ruleSet ?? (object) ($match->rule_config ?? []);
 
         $shootout = count($shootoutShots) > 0
             ? new SummaryShootout(
@@ -317,8 +335,10 @@ class MatchSummaryBuilder
     }
 
     private function buildTeam(
-        object $team,
+        ?object $team,
+        ?string $teamName,
         ?string $capColour,
+        ?string $teamId,
         $rosterEntries,
         array $playerGoals,
         array $playerFouls,
@@ -326,11 +346,12 @@ class MatchSummaryBuilder
         array $playersFouledOut,
     ): SummaryTeam {
         $players = $rosterEntries->map(function ($entry) use ($playerGoals, $playerFouls, $playerExclusions, $playersFouledOut) {
-            $playerId = $entry->player_id;
+            $playerId = $entry->player_id ?? $entry->external_player_id;
+            $playerName = $entry->player?->preferred_name ?? $entry->player?->name ?? $entry->player_name ?? 'Unknown';
 
             return new SummaryPlayer(
                 capNumber: $entry->cap_number,
-                name: $entry->player->preferred_name ?? $entry->player->name,
+                name: $playerName,
                 role: $entry->role->value,
                 isStarting: $entry->is_starting,
                 goals: $playerGoals[$playerId] ?? 0,
@@ -342,9 +363,9 @@ class MatchSummaryBuilder
         })->sortBy('capNumber')->values()->all();
 
         return new SummaryTeam(
-            teamId: $team->id,
-            teamName: $team->name,
-            clubName: $team->club?->name,
+            teamId: $team?->id ?? $teamId,
+            teamName: $team?->name ?? $teamName ?? 'Unknown',
+            clubName: $team?->club?->name,
             capColour: $capColour,
             players: $players,
         );
